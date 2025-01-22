@@ -12,6 +12,7 @@
           />
         <UTable :rows="paginatedTodos" :columns="columns">
             <template #actions-data="{ row }">
+                <UButton @click="navigateToUpdatePage(row.id)" color="emerald">Edit</UButton>
                 <UButton @click="deleteTodo(row.id)" color="red">Delete</UButton>
             </template>
         </UTable>
@@ -33,6 +34,10 @@ const itemsPerPage = ref(10);
 
 const navigateToCreatePage = () => {
     router.push('/create-todo');
+}
+
+const navigateToUpdatePage = (id: number) => {
+    router.push({path: '/update-todo', query: { id }});
 }
 
 const columns = [

@@ -6,6 +6,6 @@
         public DateTime DueDate { get; set; }
         public bool IsCompleted { get; set; } = false;
 
-        public int? ParentTodoId { get; set; } // possibly null since todo must not always have parent
+        public int? ParentTodoId { get; set; }
     }
 }

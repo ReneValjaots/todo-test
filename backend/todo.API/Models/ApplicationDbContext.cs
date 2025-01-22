@@ -11,7 +11,7 @@ namespace todo.API.Models {
             var random = new Random();
             var todos = new List<Todo>();
 
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1_000; i++) {
                 todos.Add(new Todo {
                     Description = $"Todo item {i + 1}",
                     CreationDate = DateTime.Now.AddDays(-random.Next(0, 365)),
