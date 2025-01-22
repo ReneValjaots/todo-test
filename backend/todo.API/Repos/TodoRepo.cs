@@ -40,14 +40,20 @@ namespace todo.API.Repos {
         }
 
         public async Task<Todo?> GetTodoAsync(int id) {
-            return await _context.Todos
-                .Where(i => i.Id == id)
-                .FirstOrDefaultAsync();
+            return await _context.Todos.FindAsync(id);
         }
 
         public async Task<Todo?> PutTodoAsync(int id, UpdateTodoDto todoDto) {
             var existingTodo = await _context.Todos.FindAsync(id);
             if (existingTodo == null) return null;
+
+            if (todoDto.DueDate < DateTime.Now) {
+                throw new ArgumentException("Due date cannot be in the past.");
+            }
+
+            if (todoDto.ParentTodoId != null && !await TodoExistsAsync(todoDto.ParentTodoId.Value)) {
+                throw new ArgumentException("ParentTodoId must refer to an existing Todo.");
+            }
 
             existingTodo.Description = todoDto.Description;
             existingTodo.DueDate = todoDto.DueDate;
@@ -59,11 +65,20 @@ namespace todo.API.Repos {
         }
 
         public async Task<Todo> PostTodoAsync(CreateTodoDto todoDto) {
+            if (todoDto.DueDate < DateTime.Now) {
+                throw new ArgumentException("Due date cannot be in the past.");
+            }
+
+            if (todoDto.ParentTodoId != null && !await TodoExistsAsync(todoDto.ParentTodoId.Value)) {
+                throw new ArgumentException("ParentTodoId must refer to an existing Todo.");
+            }
+
             var todo = new Todo {
                 Description = todoDto.Description,
                 DueDate = todoDto.DueDate,
                 ParentTodoId = todoDto.ParentTodoId,
             };
+
             await _context.Todos.AddAsync(todo);
             await _context.SaveChangesAsync();
             return todo;
@@ -76,6 +91,10 @@ namespace todo.API.Repos {
             await _context.SaveChangesAsync();
 
             return todo;
+        }
+
+        private async Task<bool> TodoExistsAsync(int id) {
+            return await _context.Todos.AnyAsync(x => x.Id == id);
         }
     }
 }

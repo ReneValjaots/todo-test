@@ -7,7 +7,9 @@ namespace todo.API.Models {
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
-
+            builder.Entity<Todo>().Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.Entity<Todo>().HasIndex(t => t.IsCompleted);
+            builder.Entity<Todo>().HasIndex(t => t.DueDate);
             InitializeTables(builder);
         }
 

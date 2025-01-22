@@ -34,15 +34,24 @@ namespace todo.API.Controllers {
 
         [HttpPut("{id:int}")] public async Task<IActionResult> PutTodo(int id, UpdateTodoDto todoDto) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var updatedTodo = await _repo.PutTodoAsync(id, todoDto);
-            if (updatedTodo == null) return NotFound();
-
-            return NoContent();
+            try {
+                var updatedTodo = await _repo.PutTodoAsync(id, todoDto);
+                if (updatedTodo == null) return NotFound();
+                return NoContent();
+            }
+            catch (ArgumentException ex) {
+                return BadRequest(ex.Message); 
+            }
         }
 
         [HttpPost] public async Task<ActionResult<Todo>> PostTodo(CreateTodoDto todoDto) {
-            var createdTodo = await _repo.PostTodoAsync(todoDto);
-            return CreatedAtAction(nameof(GetTodo), new { id = createdTodo.Id }, createdTodo);
+            try {
+                var createdTodo = await _repo.PostTodoAsync(todoDto);
+                return CreatedAtAction(nameof(GetTodo), new { id = createdTodo.Id }, createdTodo);
+            }
+            catch (ArgumentException ex) {
+                return BadRequest(ex.Message); 
+            }
         }
 
         [HttpDelete("{id:int}")] public async Task<IActionResult> DeleteTodo(int id) {
@@ -50,7 +59,7 @@ namespace todo.API.Controllers {
             var todo = await _repo.DeleteTodoAsync(id);
             if (todo == null) return NotFound();
 
-            return Ok(todo);
+            return NoContent();
         }
     }
 }

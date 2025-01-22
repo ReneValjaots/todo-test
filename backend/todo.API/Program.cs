@@ -30,15 +30,6 @@ var app = builder.Build();
 EnsureDatabaseCreated(app);
 var todoDbTask = Task.Run(async () => await TryInitializeTodoDatabase(app));
 
-// Seed database for testing
-using (var scope = app.Services.CreateScope()) {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<TodoDbContext>();
-
-    context.Database.Migrate(); 
-    //await context.SeedDatabaseAsync(); 
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -64,7 +55,7 @@ static void EnsureDatabaseCreated(WebApplication app) {
 
 static async Task TryInitializeTodoDatabase(WebApplication app) {
     var todoDb = GetContext<TodoDbContext>(app);
-    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(1000_000);
+    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(100000);
 
 }
 
