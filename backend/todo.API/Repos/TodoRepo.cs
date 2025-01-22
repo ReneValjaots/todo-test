@@ -5,9 +5,9 @@ using todo.API.Models;
 
 namespace todo.API.Repos {
     public class TodoRepo : ITodoRepo {
-        private readonly ApplicationDbContext _context;
+        private readonly TodoDbContext _context;
 
-        public TodoRepo(ApplicationDbContext context) {
+        public TodoRepo(TodoDbContext context) {
             _context = context;
         }
 
