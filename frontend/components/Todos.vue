@@ -18,6 +18,7 @@
   
       <UTable :rows="paginatedTodos" :columns="columns">
         <template #actions-data="{ row }">
+          <UButton @click="navigateToDetailsPage(row.id)" color="sky" class="mr-2">Details</UButton>
           <UButton @click="navigateToUpdatePage(row.id)" color="emerald" class="mr-2">Edit</UButton>
           <UButton @click="deleteTodo(row.id)" color="red">Delete</UButton>
         </template>
@@ -33,6 +34,8 @@
   </template>
 
 <script setup lang="ts">
+import { UButton } from '#components';
+
 const { customFetch } = useApi();
 const router = useRouter();
 
@@ -49,6 +52,10 @@ const navigateToCreatePage = () => {
 
 const navigateToUpdatePage = (id: number) => {
     router.push({path: '/update-todo', query: { id }});
+}
+
+const navigateToDetailsPage = (id: number) => {
+    router.push(`/details/${id}`);
 }
 
 const columns = [
