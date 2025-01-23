@@ -23,13 +23,32 @@ namespace todo.API.Controllers {
             return Ok(result);
         }
 
-        [HttpGet("{id:int}")] public async Task<ActionResult<Todo>> GetTodo(int id) {
+        [HttpGet("{id:int}")] public async Task<ActionResult<Todo>> GetTodoById(int id) {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var todo = await _repo.GetTodoAsync(id);
+            var todo = await _repo.GetTodoByIdAsync(id);
 
             if (todo == null) return NotFound();
 
             return Ok(todo);
+        }
+
+        [HttpGet("{id:int}/details")] public async Task<ActionResult<TodoWithChildrenDto>> GetDetailedTodoById(int id) {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var todo = await _repo.GetDetailedTodoByIdAsync(id);
+
+            if (todo == null) return NotFound();
+
+            return Ok(todo);
+        }
+
+        [HttpGet("{id:int}/children")] public async Task<ActionResult<TodoChildrenDto>> GetTodoChildren(int id) {
+            var todoWithChildren = await _repo.GetChildrenByTodoIdAsync(id);
+
+            if (todoWithChildren == null) {
+                return NotFound($"Todo with ID {id} not found.");
+            }
+
+            return Ok(todoWithChildren);
         }
 
         [HttpPut("{id:int}")] public async Task<IActionResult> PutTodo(int id, UpdateTodoDto todoDto) {
@@ -47,7 +66,7 @@ namespace todo.API.Controllers {
         [HttpPost] public async Task<ActionResult<Todo>> PostTodo(CreateTodoDto todoDto) {
             try {
                 var createdTodo = await _repo.PostTodoAsync(todoDto);
-                return CreatedAtAction(nameof(GetTodo), new { id = createdTodo.Id }, createdTodo);
+                return CreatedAtAction(nameof(GetTodoById), new { id = createdTodo.Id }, createdTodo);
             }
             catch (ArgumentException ex) {
                 return BadRequest(ex.Message); 

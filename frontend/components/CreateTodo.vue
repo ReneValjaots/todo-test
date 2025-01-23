@@ -6,10 +6,10 @@
         <UInput v-model="newTodo.description" label="Description" placeholder="Enter description" required />
         
         <div>Due Date</div>
-        <UInput v-model="newTodo.dueDate" label="Due Date" type="date" required />
+        <UInput v-model="newTodo.dueDate" label="Due Date" type="datetime-local" required />
         
         <div>Parent Todo ID (optional)</div>
-        <UInput v-model="newTodo.parentTodoId" label="Parent Todo ID (optional)" type="number" placeholder="Enter parent todo ID if any" />
+        <UInput v-model="newTodo.parentTodoId" label="Parent Todo ID (optional)" type="number" placeholder="Enter parent todo ID if any" :min="1"/>
         
         <UButton type="submit" color="emerald">Create Todo</UButton>
       </form>

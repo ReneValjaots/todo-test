@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using todo.API.Data;
 using todo.API.Interfaces;
-using todo.API.Models;
 using todo.API.Repos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,7 +55,7 @@ static void EnsureDatabaseCreated(WebApplication app) {
 
 static async Task TryInitializeTodoDatabase(WebApplication app) {
     var todoDb = GetContext<TodoDbContext>(app);
-    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(100000);
+    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(10_000);
 
 }
 

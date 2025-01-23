@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace todo.API.Models {
+namespace todo.API.Data {
     public abstract class DbInitializer<TItem>(DbContext db, DbSet<TItem> set) where TItem : class, new() {
         protected TItem? Item;
         private readonly List<TItem> _list = [];

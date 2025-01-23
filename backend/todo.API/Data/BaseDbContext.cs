@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace todo.API.Models {
+namespace todo.API.Data {
     public abstract class BaseDbContext<TDbContext>(DbContextOptions<TDbContext> options) : DbContext(options) where TDbContext : DbContext {
         protected static EntityTypeBuilder<TEntity> ToTable<TEntity>(ModelBuilder builder, string name, string schema) where TEntity : class {
             return builder.Entity<TEntity>().ToTable(name, schema);

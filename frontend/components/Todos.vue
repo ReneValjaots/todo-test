@@ -1,25 +1,36 @@
 <template>
     <div class="todo-container">
-        <h2 class="page-title">Todo List</h2>
-        <UButton label="Create new" size="md" color="emerald" @click="navigateToCreatePage"/>
-        <UTextarea
-            v-model="searchQuery"
-            color="emerald"
-            size="xs"
-            variant="outline"
-            placeholder="Search by description..."
-            :rows="1"
-          />
-        <UTable :rows="paginatedTodos" :columns="columns">
-            <template #actions-data="{ row }">
-                <UButton @click="navigateToUpdatePage(row.id)" color="emerald">Edit</UButton>
-                <UButton @click="deleteTodo(row.id)" color="red">Delete</UButton>
-            </template>
-        </UTable>
-        <UPagination v-model="page" :total="todos.length" :page-count="itemsPerPage" :max="10" class="pagination"/>
+      <h2 class="page-title">Todo List</h2>
+      <div class="controls-container">
+      <UButton label="Create new" size="md" color="emerald" @click="navigateToCreatePage" />
     </div>
-    
-</template>
+    <div class="search-container">
+      <UTextarea
+        v-model="searchQuery"
+        color="emerald"
+        size="xs"
+        variant="outline"
+        placeholder="Search by description..."
+        :rows="1"
+        style="width: 400px; min-width: 400px;" 
+      />
+    </div>
+  
+      <UTable :rows="paginatedTodos" :columns="columns">
+        <template #actions-data="{ row }">
+          <UButton @click="navigateToUpdatePage(row.id)" color="emerald" class="mr-2">Edit</UButton>
+          <UButton @click="deleteTodo(row.id)" color="red">Delete</UButton>
+        </template>
+      </UTable>
+      <UPagination
+        v-model="page"
+        :total="todos.length"
+        :page-count="itemsPerPage"
+        :max="10"
+        class="pagination"
+      />
+    </div>
+  </template>
 
 <script setup lang="ts">
 const { customFetch } = useApi();
@@ -89,17 +100,27 @@ onMounted(() => {
 
 <style scoped>
 .todo-container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .page-title {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.controls-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 

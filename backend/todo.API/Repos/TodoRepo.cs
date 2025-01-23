@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using todo.API.Data;
 using todo.API.Dtos;
 using todo.API.Interfaces;
 using todo.API.Models;
@@ -15,13 +16,21 @@ namespace todo.API.Repos {
             return await _context.Todos.ToListAsync();
         }
 
-        public async Task<IEnumerable<Todo>> GetFilteredTodosAsync(bool? isCompleted, DateTime? dueDate, string? searchText) {
-            if (isCompleted != null && dueDate != null && searchText != null) {
-                return await _context.Todos.Where(x => x.Description.Contains(searchText) && 
-                                                       x.DueDate.Date == dueDate.Value.Date && 
-                                                       x.IsCompleted == isCompleted).ToListAsync();
-            }
+        public async Task<TodoChildrenDto?> GetChildrenByTodoIdAsync(int id) {
+            var todo = await _context.Todos.FindAsync(id);
+            if (todo == null) return null;
 
+            var children = await _context.Todos
+                .Where(t => t.ParentTodoId == id)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new TodoChildrenDto {
+                Children = children
+            };
+        }
+
+        public async Task<IEnumerable<Todo>> GetFilteredTodosAsync(bool? isCompleted, DateTime? dueDate, string? searchText) {
             var query = _context.Todos.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchText)) {
@@ -36,11 +45,26 @@ namespace todo.API.Repos {
                 query = query.Where(x => x.IsCompleted == isCompleted);
             }
 
-            return await query.ToListAsync();
+            return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Todo?> GetTodoAsync(int id) {
+        public async Task<Todo?> GetTodoByIdAsync(int id) {
             return await _context.Todos.FindAsync(id);
+        }
+
+        public async Task<TodoWithChildrenDto?> GetDetailedTodoByIdAsync(int id) {
+           var todo = await _context.Todos.FindAsync(id);
+           if (todo == null) return null;
+
+           var children = await _context.Todos
+               .Where(t => t.ParentTodoId == id)
+               .AsNoTracking()
+               .ToListAsync();
+
+           return new TodoWithChildrenDto {
+               Todo = todo,
+               Children = children
+           };
         }
 
         public async Task<Todo?> PutTodoAsync(int id, UpdateTodoDto todoDto) {
@@ -69,14 +93,14 @@ namespace todo.API.Repos {
                 throw new ArgumentException("Due date cannot be in the past.");
             }
 
-            if (todoDto.ParentTodoId != null && !await TodoExistsAsync(todoDto.ParentTodoId.Value)) {
+            if (todoDto.ParentTodoId.HasValue && todoDto.ParentTodoId > 0 && !await TodoExistsAsync(todoDto.ParentTodoId.Value)) {
                 throw new ArgumentException("ParentTodoId must refer to an existing Todo.");
             }
 
             var todo = new Todo {
                 Description = todoDto.Description,
                 DueDate = todoDto.DueDate,
-                ParentTodoId = todoDto.ParentTodoId,
+                ParentTodoId = todoDto.ParentTodoId > 0 ? todoDto.ParentTodoId : null,
             };
 
             await _context.Todos.AddAsync(todo);
@@ -87,6 +111,7 @@ namespace todo.API.Repos {
         public async Task<Todo?> DeleteTodoAsync(int id) {
             var todo = await _context.Todos.FirstOrDefaultAsync(i => i.Id == id);
             if (todo == null) return null;
+
             _context.Todos.Remove(todo);
             await _context.SaveChangesAsync();
 
