@@ -16,17 +16,17 @@ namespace todo.API.Repos {
             return await _context.Todos.ToListAsync();
         }
 
-        public async Task<TodoChildrenDto?> GetChildrenByTodoIdAsync(int id) {
+        public async Task<SubTodosDto?> GetSubtodosAsync(int id) {
             var todo = await _context.Todos.FindAsync(id);
             if (todo == null) return null;
 
-            var children = await _context.Todos
+            var subTodos = await _context.Todos
                 .Where(t => t.ParentTodoId == id)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return new TodoChildrenDto {
-                Children = children
+            return new SubTodosDto {
+                SubTodos = subTodos
             };
         }
 
@@ -50,21 +50,6 @@ namespace todo.API.Repos {
 
         public async Task<Todo?> GetTodoByIdAsync(int id) {
             return await _context.Todos.FindAsync(id);
-        }
-
-        public async Task<TodoWithChildrenDto?> GetDetailedTodoByIdAsync(int id) {
-           var todo = await _context.Todos.FindAsync(id);
-           if (todo == null) return null;
-
-           var children = await _context.Todos
-               .Where(t => t.ParentTodoId == id)
-               .AsNoTracking()
-               .ToListAsync();
-
-           return new TodoWithChildrenDto {
-               Todo = todo,
-               Children = children
-           };
         }
 
         public async Task<Todo?> PutTodoAsync(int id, UpdateTodoDto todoDto) {

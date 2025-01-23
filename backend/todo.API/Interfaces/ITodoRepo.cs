@@ -6,8 +6,7 @@ namespace todo.API.Interfaces {
         Task<IEnumerable<Todo>> GetTodosAsync();
         Task<Todo?> GetTodoByIdAsync(int id);
         Task<IEnumerable<Todo>> GetFilteredTodosAsync(bool? isCompleted, DateTime? dueDate, string? searchText);
-        Task<TodoWithChildrenDto?> GetDetailedTodoByIdAsync(int id);
-        Task<TodoChildrenDto?> GetChildrenByTodoIdAsync(int id);
+        Task<SubTodosDto?> GetSubtodosAsync(int id);
         Task<Todo?> PutTodoAsync(int id, UpdateTodoDto todoDto);
         Task<Todo> PostTodoAsync(CreateTodoDto todoDto);
         Task<Todo?> DeleteTodoAsync(int id);

@@ -62,7 +62,7 @@ const columns = [
 
 const fetchTodos = async () => {
     try {
-        const response = await customFetch<any[]>('todo', {
+        const response = await customFetch<any[]>('todos', {
             method: 'GET',
         });
         todos.value = response;

@@ -14,7 +14,6 @@ builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(con
 
 builder.Services.AddScoped<ITodoRepo, TodoRepo>();
 
-
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", policyBuilder => {
         policyBuilder
             .SetIsOriginAllowed(_ => true)
@@ -31,7 +30,7 @@ EnsureDatabaseCreated(app);
 var todoDbTask = Task.Run(async () => await TryInitializeTodoDatabase(app));
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -40,7 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("MyPolicy");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
