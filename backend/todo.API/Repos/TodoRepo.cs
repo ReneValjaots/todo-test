@@ -97,10 +97,25 @@ namespace todo.API.Repos {
             var todo = await _context.Todos.FirstOrDefaultAsync(i => i.Id == id);
             if (todo == null) return null;
 
+            await DeleteSubtodosAsync(id);
+
             _context.Todos.Remove(todo);
             await _context.SaveChangesAsync();
 
             return todo;
+        }
+
+        private async Task DeleteSubtodosAsync(int parentId) {
+            var subTodos = await _context.Todos
+                .Where(t => t.ParentTodoId == parentId)
+                .ToListAsync();
+
+            foreach (var subTodo in subTodos) {
+                await DeleteSubtodosAsync(subTodo.Id);
+                _context.Todos.Remove(subTodo);
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private async Task<bool> TodoExistsAsync(int id) {
