@@ -3,38 +3,36 @@
 namespace todo.API.Data {
     public abstract class DbInitializer<TItem>(DbContext db, DbSet<TItem> set) where TItem : class, new() {
         protected TItem? Item;
-        private readonly List<TItem> _list = [];
         protected abstract void SetValues(int index);
 
-        private async Task Save() {
-            await set.AddRangeAsync(_list);
-            await db.SaveChangesAsync();
-            _list.Clear();
-        }
-
         private bool CanInitialize() {
-            if (db is null)
-                return false;
-            if (set is null)
-                return false;
+            if (db is null || set is null) return false;
             db.Database.EnsureCreated();
             return !set.Any();
         }
 
-        public async Task Initialize(uint count) {
+        public async Task Initialize(uint count, int batchSize = 1000) {
             if (!CanInitialize())
                 return;
+
+            var batch = new List<TItem>(batchSize);
+
             try {
-                for (var i = 1; i < count; i++) {
+                for (var i = 1; i <= count; i++) {
                     Item = new TItem();
                     SetValues(i);
-                    _list.Add(Item);
-                    if (i % 100 != 0) continue;
-                    await Save();
+                    batch.Add(Item);
+
+                    if (i % batchSize == 0 || i == count) {
+                        await set.AddRangeAsync(batch);
+                        await db.SaveChangesAsync();
+                        batch.Clear();
+                    }
                 }
             }
-            finally {
-                await Save();
+            catch (Exception ex) {
+                Console.WriteLine($"Seeding failed: {ex.Message}");
+                throw;
             }
         }
     }

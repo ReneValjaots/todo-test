@@ -54,8 +54,7 @@ static void EnsureDatabaseCreated(WebApplication app) {
 
 static async Task TryInitializeTodoDatabase(WebApplication app) {
     var todoDb = GetContext<TodoDbContext>(app);
-    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(10_000);
-
+    await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(100_000);
 }
 
 static TDbContext GetContext<TDbContext>(WebApplication app) where TDbContext : DbContext => app
