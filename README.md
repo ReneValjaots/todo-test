@@ -30,7 +30,7 @@ The stack can be fully brought up using **Docker Compose**:
 ## Step-by-step guide to run
 1) **Clone the repository**  Run the following command in your terminal:
     ```bash
-   git clone https://github.com/JanderLapmaa/test-assignment
+   git clone https://github.com/ReneValjaots/todo-test.git
 
 2) **Move to directory**  Run the following command in your terminal:
     ```bash
