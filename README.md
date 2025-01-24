@@ -3,29 +3,46 @@
 ## Thought process and reasoning
 
 ### Backend
-For the backend, I used .NET and implemented some patterns:
-- **Repository Pattern**: The repository pattern was used to abstract data access logic, keeping it separate from the business logic. This makes the application more testable and maintainable.
-- **DTOs (Data Transfer Objects)**: DTOs allow us to manage and control what data is exposed to the client. For instance, we shouldn't expose internal fields like `Id` and `CreationDate` during create/update operations.
+For the backend, I used .NET Core and implemented some design patterns:
+- **Repository Pattern**: The repository pattern was used to abstract data access logic and separate it from business logic. While this pattern may not have a significant impact on a small project like this, it ensures scalability and simplifies adding new models as the project grows.
+- **DTOs (Data Transfer Objects)**: DTOs allow us to manage and control what data is exposed to the client. For instance, we shouldn't expose sensitive fields like `Id` and `CreationDate` during create/update operations.
 
 The backend structure was designed with the following folders:
 - **Controllers**: Contains the endpoints for interacting with the API.
 - **Data**: Database context and initializers.
 - **DTOs**: As explained before.
 - **Models**: Represents database entities, like `Todo`.
-- **Repositories & Interfaces**: Implements the repository pattern, separating data access logic from the rest of the application.
+- **Repositories & Interfaces**: Implements data logic with repository pattern.
+
+Database
+The application uses Microsoft SQL Server as the database.
+
+The application initializes test data using a custom implementation of database initialization, which leverages generic base classes for creating tables and populating sample data. This allows scalability while keeping the code clean. The database initialization is implemented with the following:
+BaseDbContext: Used for defining database tables and setting column types.
+DbInitializer: Handles test data creation.
 
 ### Frontend
-For the frontend, I chose **Nuxt 3** because I’ve worked with Nuxt before and am more comfortable using it than React. 
+For the frontend, I chose Nuxt 3 because I am familiar with it and find it more comfortable to use compared to other JavaScript frameworks. 
 
 ### Application Design
 The application supports basic CRUD functionality with filtering for todos:
-- Users can filter by `done`, `due date`, and `description text`.
-- Filtering is optimized to handle 1 000 000 todos with ease.
+- Users can filter by `done / not done`, `due date`, and `description text`.
 
-Users can get sub Todos of a parent using a dedicated endpoint. This functionality is also implemented on the frontend using the "details" button on the "My Todos" page. 
+Users can retrieve subtodos of a parent todo using a dedicated endpoint. This functionality is also available on the frontend through the "Details" button on the "My Todos" page.
 
-### Docker & Deployment
-The stack can be fully brought up using **Docker Compose**:
+### API Endpoints
+
+| Method | Endpoint                | Description                                   |
+|--------|-------------------------|-----------------------------------------------|
+| GET    | /api/todos              | Fetch all todos.                             |
+| GET    | /api/todos/filter       | Filter todos by completion, due date, or text.|
+| GET    | /api/todo/{id}          | Fetch a specific todo by its ID.             |
+| PUT    | /api/todo/{id}          | Update a todo by its ID.                     |
+| DELETE | /api/todo/{id}          | Delete a specific todo.                      |
+| GET    | /api/todo/{id}/subtodos | Fetch subtodos of a specific parent todo.    |
+| POST   | /api/todo               | Create a new todo.                           |
+
+---
 
 ## Step-by-step guide to run
 1) **Clone the repository**  Run the following command in your terminal:
