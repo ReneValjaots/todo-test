@@ -17,9 +17,19 @@ The backend structure was designed with the following folders:
 Database
 The application uses Microsoft SQL Server as the database.
 
-The application initializes test data using a custom implementation of database initialization, which leverages generic base classes for creating tables and populating sample data. This allows scalability while keeping the code clean. The database initialization is implemented with the following:
-BaseDbContext: Used for defining database tables and setting column types.
-DbInitializer: Handles test data creation.
+The application initializes test data using a custom implementation of database initialization, which leverages generic base classes for creating tables and populating sample data. 
+The database initialization is implemented with the following:
+1) BaseDbContext: Used for defining database tables and setting column types.
+2) DbInitializer: Handles test data creation.
+
+**Modifying Test Data Count**
+To change the number of test data entries generated in the database, modify the value in the Program.cs file:
+```c#
+await new TodoDbInitializer(todoDb, todoDb.Todos).Initialize(10_000, batchSize: 5000);
+```
+
+Replace 10_000 with the desired number of test entries and 500 with the desired batch size (default value is 1000).
+
 
 ### Frontend
 For the frontend, I chose Nuxt 3 because I am familiar with it and find it more comfortable to use compared to other JavaScript frameworks. 
@@ -48,18 +58,22 @@ Users can retrieve subtodos of a parent todo using a dedicated endpoint. This fu
 1) **Clone the repository**  Run the following command in your terminal:
     ```bash
    git clone https://github.com/ReneValjaots/todo-test.git
+    ```
 
 2) **Move to directory**  Run the following command in your terminal:
     ```bash
    cd todo-test
+    ```
 
 3) **Docker compose build**  Run the following command in your terminal:
     ```bash
    docker-compose build
+    ```
 
 4) **Docker compose up**  Run the following command in your terminal:
     ```bash
    docker-compose up
+    ```
 
 5) **Frontend url** After running these commands the frontend page should be accessible on URL: http://localhost:3333/
 6) **Backend swagger** After running these commands the backend swagger page should be accessible on URL: http://localhost:5017/swagger/index.html
